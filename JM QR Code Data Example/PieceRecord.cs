@@ -13,7 +13,6 @@ namespace JM.Tools
         public int BatchNo { get; set; }
         public string ArticleNo { get; set; }
         public string ArticleDescription { get; set; }
-        public DateTime? ProductionDate { get; set; }
         public int? MachineID { get; set; }
         public decimal? Brut { get; set; }
         public decimal? Allowance { get; set; }
