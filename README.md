@@ -1,3 +1,2 @@
 # JM-QR-Code-Data-Example
-Shows how to use the JM QR Codes in your own solutions
-It shows how to use the QR Codes for piece and packing lists.
+This example shows how to use the Junkers & Muellers QR Codes for piece and packing lists.
