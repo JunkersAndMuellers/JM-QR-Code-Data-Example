@@ -27,10 +27,10 @@ namespace JM.Tools
         public decimal? WeightBrut { get; set; }
         public decimal? Tare { get; set; }
         public decimal? WeightNet { get; set; }
-        public decimal? Weight_g_rm { get; set; }
+        public decimal? WeightRM { get; set; }
+        public decimal? WeightM2 { get; set; }
         public decimal? Witdh { get; set; }
         public string Quality { get; set; }
-        public decimal? WeightM2 { get; set; }
         //public decimal? GewichtBerechnet { get; set; }
         public decimal? BrutFeet { get; set; }
         public decimal? AllowanceFeet { get; set; }
