@@ -27,10 +27,11 @@ namespace JM.Tools
         public decimal? WeightBrut { get; set; }
         public decimal? Tare { get; set; }
         public decimal? WeightNet { get; set; }
-        public decimal? lfdm { get; set; }
+        public decimal? Weight_g_rm { get; set; }
         public decimal? Witdh { get; set; }
         public string Quality { get; set; }
         public decimal? WeightM2 { get; set; }
+        //public decimal? GewichtBerechnet { get; set; }
         public decimal? BrutFeet { get; set; }
         public decimal? AllowanceFeet { get; set; }
         public decimal? NetFeet { get; set; }
@@ -53,6 +54,7 @@ namespace JM.Tools
         public string CustomerArticleDesc { get; set; }
         public int? DeliveryNoteNo { get; set; }
         public int? DeliveryNotePos { get; set; }
+        //public int? CustomerNo { get; set; }
         public int? InvoiceNo { get; set; }
         public string HSCode { get; set; }
         public List<PieceErrorRecord> Errors { get; set; }
