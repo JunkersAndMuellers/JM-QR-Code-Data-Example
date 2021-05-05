@@ -9,6 +9,7 @@ namespace JM.Tools
     [Serializable]
     public class ShippingUnitRecord
     {
+        public int PackinglistNo { get; set; }
         public int ShippingUnitNo { get; set; }
         public string ShippingUnitDescription { get; set; }
         public double TotalWeight { get; set; }
