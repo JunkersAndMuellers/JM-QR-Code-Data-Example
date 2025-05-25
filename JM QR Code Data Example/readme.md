@@ -19,7 +19,7 @@ The `[uid]` is a unique identifier to ensure data security between customers.
 
 ## Project Purpose
 
-This C# sample application for Windows demonstrates how to:
+This C# sample application for Windows demonstrates how to: 
 - Scan a QR code from a JM label or document
 - Retrieve the corresponding XML data from the JM web service
 - Deserialize the XML into C# data structures
