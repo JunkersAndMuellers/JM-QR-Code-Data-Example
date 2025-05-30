@@ -18,7 +18,7 @@ namespace JMQRCodeDataExample
     {
         public Form1()
         {
-            InitializeComponent();
+            InitializeComponent(); 
         }
 
         private void btnExit_Click(object sender, EventArgs e)
