@@ -279,7 +279,7 @@ namespace JMQRCodeDataExample
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnExit;
-            this.ClientSize = new System.Drawing.Size(943, 477);
+            this.ClientSize = new System.Drawing.Size(967, 498);
             this.Controls.Add(this.tbLength);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.tbArticleDesc);

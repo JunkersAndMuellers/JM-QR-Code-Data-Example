@@ -6,7 +6,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -16,9 +18,12 @@ namespace JMQRCodeDataExample
 {
     public partial class Form1 : Form
     {
+        private static readonly HttpClient httpClient = new HttpClient();
+        private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
         public Form1()
         {
-            InitializeComponent(); 
+            InitializeComponent();
         }
 
         private void btnExit_Click(object sender, EventArgs e)
@@ -28,10 +33,62 @@ namespace JMQRCodeDataExample
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
         }
 
-        private void btnGO_Click(object sender, EventArgs e)
+        private async void btnGO_Click(object sender, EventArgs e)
+        {
+            btnGO.Enabled = false; // Disable button to prevent multiple clicks
+            cancellationTokenSource.Cancel(); // Cancel previous requests
+            cancellationTokenSource = new CancellationTokenSource(); // Create new token
+            try
+            {
+                ClearTextBoxes();
+                var token = cancellationTokenSource.Token;
+
+                if (tbURL.Text.Contains("GetPiece?uid="))
+                {
+                    // Single Piece Data
+                    tbType.Text = "JM-Piece";
+                    var jmPiece = await FetchAndDeserializeAsync<PieceRecord>(tbURL.Text, token);
+                    if (jmPiece != null)
+                    {
+                        tbType.Text = $"JM-Piece {jmPiece.PieceNo}";
+                        tbArticleNo.Text = jmPiece.ArticleNo ?? string.Empty;
+                        tbArticleDesc.Text = jmPiece.ArticleDescription ?? string.Empty;
+                        tbWeightPiece.Text = $"{jmPiece.WeightBrut}/{jmPiece.WeightNet} kg";
+                        tbLength.Text = $"{jmPiece.Brut}/{jmPiece.Net} m";
+                    }
+                }
+                else
+                {
+                    // Packing List Data
+                    tbType.Text = "JM-Packing list";
+                    var jmPackingList = await FetchAndDeserializeAsync<PLRecord>(tbURL.Text, token);
+                    if (jmPackingList != null)
+                    {
+                        tbType.Text = $"JM-Packing list No.: {jmPackingList.PackinglistNo}";
+                        tbName.Text = jmPackingList.CustomerName ?? string.Empty;
+                        tbPieces.Text = $"{jmPackingList.PieceCount} pieces";
+                        tbWeight.Text = $"{jmPackingList.TotalWeight} kg";
+                        tbUnits.Text = $"{jmPackingList.ShippingUnitCount} shipping units";
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                MessageBox.Show("Operation canceled.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnGO.Enabled = true; // Re-enable button
+            }
+        }
+
+        private void ClearTextBoxes()
         {
             tbType.Text = "";
             tbName.Text = "";
@@ -42,90 +99,33 @@ namespace JMQRCodeDataExample
             tbArticleDesc.Text = "";
             tbWeightPiece.Text = "";
             tbLength.Text = "";
-
-            if (tbURL.Text.Contains("GetPiece?uid="))
-            {
-                // Single Piece Data
-                tbType.Text = "JM-Piece ";
-                PieceRecord JMPiece = GetPieceData(tbURL.Text);
-                if (JMPiece != null)
-                {
-                    //
-                    // write the JMPiece to your database server
-                    //
-                    tbType.Text = "JM-Piece " + JMPiece.PieceNo.ToString();
-                    tbArticleNo.Text = JMPiece.ArticleNo;
-                    tbArticleDesc.Text = JMPiece.ArticleDescription;
-                    tbWeightPiece.Text = JMPiece.WeightBrut.ToString() + "/" + JMPiece.WeightNet.ToString() + " kg";
-                    tbLength.Text = JMPiece.Brut.ToString() + "/" + JMPiece.Net.ToString() + " m";
-                }
-            }
-            else
-            {
-                // Packing List Data
-                tbType.Text = "JM-Packing list";
-                PLRecord JMPackingList = GetPackingListData(tbURL.Text);
-                if (JMPackingList != null)
-                {
-                    //
-                    // write the JMPackingList to your database server
-                    //
-                    tbType.Text = "JM-Packing list No.:"+JMPackingList.PackinglistNo.ToString();
-                    tbName.Text = JMPackingList.CustomerName;
-                    tbPieces.Text = JMPackingList.PieceCount.ToString() + " pieces";
-                    tbWeight.Text = JMPackingList.TotalWeight.ToString() + " kg";
-                    tbUnits.Text = JMPackingList.ShippingUnitCount.ToString() + " shipping units";
-                }
-            }
         }
 
-        private PLRecord GetPackingListData(string url)
+        private async Task<T> FetchAndDeserializeAsync<T>(string url, CancellationToken token) where T : class
         {
-            PLRecord JMPackingList = new PLRecord();
-            WebRequest apiRequest = WebRequest.Create(url);
-            apiRequest.Proxy = null;
-            HttpWebResponse apiResponse = (HttpWebResponse)apiRequest.GetResponse();
-
-            if (apiResponse.StatusCode == HttpStatusCode.OK)
+            try
             {
-                string xmlOutput;
-                using (StreamReader sr = new StreamReader(apiResponse.GetResponseStream()))
-                    xmlOutput = sr.ReadToEnd();
-                if (xmlOutput == "\r\n")
-                    return null;
-                XmlSerializer xmlSerialize = new XmlSerializer(typeof(PLRecord));
-
-                var xmlResult = (PLRecord)xmlSerialize.Deserialize(new StringReader(xmlOutput));
-
-                if (xmlResult != null)
-                    return (PLRecord)xmlResult;
-                else
-                    return null;
+                var response = await httpClient.GetAsync(url, token);
+                if (response.IsSuccessStatusCode)
+                {
+                    var xmlOutput = await response.Content.ReadAsStringAsync();
+                    if (string.IsNullOrWhiteSpace(xmlOutput))
+                        return null;
+                    var xmlSerialize = new XmlSerializer(typeof(T));
+                    return xmlSerialize.Deserialize(new StringReader(xmlOutput)) as T;
+                }
             }
-            return null;
-        }
-        private PieceRecord GetPieceData(string url)
-        {
-            PieceRecord JMPiece = new PieceRecord();
-            WebRequest apiRequest = WebRequest.Create(url);
-            apiRequest.Proxy = null;
-            HttpWebResponse apiResponse = (HttpWebResponse)apiRequest.GetResponse();
-
-            if (apiResponse.StatusCode == HttpStatusCode.OK)
+            catch (OperationCanceledException)
             {
-                string xmlOutput;
-                using (StreamReader sr = new StreamReader(apiResponse.GetResponseStream()))
-                    xmlOutput = sr.ReadToEnd();
-                if (xmlOutput == "\r\n")
-                    return null;
-                XmlSerializer xmlSerialize = new XmlSerializer(typeof(PieceRecord));
-
-                var xmlResult = (PieceRecord)xmlSerialize.Deserialize(new StringReader(xmlOutput));
-
-                if (xmlResult != null)
-                    return (PieceRecord)xmlResult;
-                else
-                    return default(PieceRecord);
+                throw;
+            }
+            catch (HttpRequestException ex)
+            {
+                MessageBox.Show($"Network error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error retrieving {typeof(T).Name} data:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return null;
         }
