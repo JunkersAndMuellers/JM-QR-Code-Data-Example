@@ -60,7 +60,7 @@ namespace JMQRCodeDataExample
             this.pictureBox1.Image = global::JMQRCodeDataExample.Properties.Resources.jm_tt_gif;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(825, 67);
+            this.pictureBox1.Size = new System.Drawing.Size(945, 67);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -68,7 +68,7 @@ namespace JMQRCodeDataExample
             // btnExit
             // 
             this.btnExit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnExit.Location = new System.Drawing.Point(735, 442);
+            this.btnExit.Location = new System.Drawing.Point(856, 442);
             this.btnExit.Name = "btnExit";
             this.btnExit.Size = new System.Drawing.Size(75, 23);
             this.btnExit.TabIndex = 1;
@@ -224,9 +224,8 @@ namespace JMQRCodeDataExample
             this.tbArticleDesc.Location = new System.Drawing.Point(468, 227);
             this.tbArticleDesc.Name = "tbArticleDesc";
             this.tbArticleDesc.ReadOnly = true;
-            this.tbArticleDesc.Size = new System.Drawing.Size(138, 20);
+            this.tbArticleDesc.Size = new System.Drawing.Size(463, 20);
             this.tbArticleDesc.TabIndex = 22;
-            this.tbArticleDesc.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label8
             // 
@@ -280,7 +279,7 @@ namespace JMQRCodeDataExample
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnExit;
-            this.ClientSize = new System.Drawing.Size(822, 477);
+            this.ClientSize = new System.Drawing.Size(943, 477);
             this.Controls.Add(this.tbLength);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.tbArticleDesc);
