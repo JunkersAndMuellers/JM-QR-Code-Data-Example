@@ -153,7 +153,7 @@ All values such as lengths or weights are metric unless otherwise specified (e.g
 
 ## Support
 
-For technical questions, contact: edv@jm-textile.com
+For technical questions, contact: it@jm-textile.com
 
 ---
 
