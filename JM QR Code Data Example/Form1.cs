@@ -16,25 +16,50 @@ using JM.Tools;
 
 namespace JMQRCodeDataExample
 {
+    /// <summary>
+    /// Main form for the JM QR Code Data Example application.
+    /// Handles user interaction, data retrieval, and display logic.
+    /// </summary>
     public partial class Form1 : Form
     {
+        /// <summary>
+        /// Shared HttpClient instance for all HTTP requests.
+        /// </summary>
         private static readonly HttpClient httpClient = new HttpClient();
+
+        /// <summary>
+        /// CancellationTokenSource for managing and canceling async HTTP requests.
+        /// </summary>
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
+        /// <summary>
+        /// Initializes the form and its components.
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Handles the Exit button click event to close the application.
+        /// </summary>
         private void btnExit_Click(object sender, EventArgs e)
         {
             Close();
         }
 
+        /// <summary>
+        /// Handles the form load event (currently unused).
+        /// </summary>
         private void Form1_Load(object sender, EventArgs e)
         {
         }
 
+        /// <summary>
+        /// Handles the GO button click event.
+        /// Fetches and displays either piece or packing list data based on the URL.
+        /// Disables the button during the operation and handles cancellation and errors.
+        /// </summary>
         private async void btnGO_Click(object sender, EventArgs e)
         {
             btnGO.Enabled = false; // Disable button to prevent multiple clicks
@@ -76,10 +101,12 @@ namespace JMQRCodeDataExample
             }
             catch (OperationCanceledException)
             {
+                // Operation was canceled by the user or a new request
                 MessageBox.Show("Operation canceled.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
+                // General error during fetch or deserialization
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -88,6 +115,9 @@ namespace JMQRCodeDataExample
             }
         }
 
+        /// <summary>
+        /// Clears all relevant text boxes on the form.
+        /// </summary>
         private void ClearTextBoxes()
         {
             tbType.Text = "";
@@ -101,6 +131,14 @@ namespace JMQRCodeDataExample
             tbLength.Text = "";
         }
 
+        /// <summary>
+        /// Performs an HTTP GET request to the specified URL,
+        /// reads the XML response, and deserializes it into the specified type.
+        /// </summary>
+        /// <typeparam name="T">The target type for deserialization (e.g., PieceRecord, PLRecord).</typeparam>
+        /// <param name="url">The URL to fetch data from.</param>
+        /// <param name="token">CancellationToken for request cancellation.</param>
+        /// <returns>The deserialized object of type T, or null on error.</returns>
         private async Task<T> FetchAndDeserializeAsync<T>(string url, CancellationToken token) where T : class
         {
             try
@@ -117,14 +155,17 @@ namespace JMQRCodeDataExample
             }
             catch (OperationCanceledException)
             {
+                // Rethrow so the caller can handle cancellation
                 throw;
             }
             catch (HttpRequestException ex)
             {
+                // Network error
                 MessageBox.Show($"Network error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
+                // Error during fetch or deserialization
                 MessageBox.Show($"Error retrieving {typeof(T).Name} data:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return null;
