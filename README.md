@@ -103,7 +103,7 @@ public class PieceRecord {
     public decimal? WeightNet { get; set; }
     public decimal? WeightRM { get; set; }
     public decimal? WeightM2 { get; set; }
-    public decimal? Witdh { get; set; }
+    public decimal? Width { get; set; }
     public string Quality { get; set; }
     public decimal? BrutFeet { get; set; }
     public decimal? AllowanceFeet { get; set; }

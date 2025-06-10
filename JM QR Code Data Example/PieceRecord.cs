@@ -134,7 +134,7 @@ namespace JM.Tools
         /// <summary>
         /// Width measurement of the piece.
         /// </summary>
-        public decimal? Witdh { get; set; }
+        public decimal? Width { get; set; }
 
         /// <summary>
         /// Quality grade or classification of the piece.
